@@ -18,14 +18,17 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  */
 public class Robot extends IterativeRobot {
 	private Spark spark;
+	private Spark spark1;
 
 	@Override
 	public void robotInit() {
 		spark = new Spark(0);
+		spark1 = new Spark(1);
 	}
 
 	@Override
 	public void teleopPeriodic() {
 		spark.set(1.0);
+		spark1.set(-1.0);
 	}
 }
