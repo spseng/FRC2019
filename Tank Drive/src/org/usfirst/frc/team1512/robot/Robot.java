@@ -7,9 +7,18 @@
 
 package org.usfirst.frc.team1512.robot;
 
+import edu.wpi.first.wpilibj.GenericHID;
+//import com.ctre.phoenix.
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotDrive;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Spark;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 /**
@@ -17,19 +26,37 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
  * it contains the code necessary to operate a robot with tank drive.
  */
 public class Robot extends IterativeRobot {
-	private Spark spark;
-	private Spark spark1;
+	private DifferentialDrive m_myRobot;
+	private Joystick m_leftStick;
+	private Joystick m_rightStick;
+	private  XboxController xbox;
+	private RobotDrive myDrive;
+	private TalonSRX FrontLeftMotor;
+	private TalonSRX FrontRightMotor;
+	private TalonSRX RearLeftMotor;
+	private TalonSRX RearRightMotor;
 
 	@Override
 	public void robotInit() {
-		spark = new Spark(0);
-		spark1 = new Spark(1);
+		m_leftStick = new Joystick(0);
+		m_rightStick = new Joystick(1);
+		xbox = new XboxController(0);
+		FrontLeftMotor = new WPI_TalonSRX(1);
+		FrontRightMotor = new WPI_TalonSRX(2);
+		RearLeftMotor = new WPI_TalonSRX(3);
+		RearRightMotor = new WPI_TalonSRX(4);
+		
+		
+		
 	}
 
 	@Override
 	public void teleopPeriodic() {
-		spark.set(1.0);
-		spark1.set(-1.0);
-		// hello 
+		
+		m_myRobot.tankDrive(m_leftStick.getY(), m_rightStick.getY());
+		m_myRobot.tankDrive(xbox.getY(GenericHID.Hand.kLeft), xbox.getY(GenericHID.Hand.kRight));
+		
+		FrontLeftMotor.set(ControlMode.PercentOutput, m_leftStick.getY());
 	}
+	
 }
