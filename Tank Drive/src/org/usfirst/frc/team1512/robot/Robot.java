@@ -11,9 +11,10 @@ import edu.wpi.first.wpilibj.GenericHID;
 //import com.ctre.phoenix.
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.RobotDrive;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
 
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -21,6 +22,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 
 /**
  * This is a demo program showing the use of the RobotDrive class, specifically
@@ -30,7 +32,9 @@ public class Robot extends IterativeRobot {
 	private  XboxController xbox;
 	private WPI_TalonSRX FrontLeftMotor;
 	private WPI_TalonSRX FrontRightMotor;
-	
+	private Potentiometer pot;
+	private AnalogInput ai;
+	private double degreesPot;
 
 	@Override
 	public void robotInit() {
@@ -39,9 +43,9 @@ public class Robot extends IterativeRobot {
 		xbox = new XboxController(0);
 		FrontLeftMotor = new WPI_TalonSRX(2);
 		FrontRightMotor = new WPI_TalonSRX(4);
-		
-		
-		
+		ai = new AnalogInput(3);
+		pot = new AnalogPotentiometer(ai, 360, 30);
+		degreesPot = 0;
 	}
 
 	@Override
@@ -58,6 +62,10 @@ public class Robot extends IterativeRobot {
 		else {
 			FrontRightMotor.set(0.0);
 		}
+		
+		degreesPot = pot.get();
+		
+		System.out.println(degreesPot);
 		
 	}
 	
