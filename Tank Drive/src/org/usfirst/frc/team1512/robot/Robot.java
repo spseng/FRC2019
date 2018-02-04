@@ -18,7 +18,8 @@ import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
-import edu.wpi.first.wpilibj.AnalogGyro;
+
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 
 
@@ -56,8 +57,8 @@ public class Robot extends IterativeRobot {
 	
 	//sensors:
 	private Potentiometer pot1;
-	private BuiltInAccelerometer Accel1;
-	private AnalogGyro Gyro1;
+	private BuiltInAccelerometer Accel1; //this is the builtin 3axis accelerometer on the ADXRS450 port, connected to SPI port on roboRio
+	private ADXRS450_Gyro Gyro1;	//this is the builtin gyro on the ADXRS450 port, connected to SPI port on roboRio
 	
 	//variables
 		//Potentiometers:
@@ -92,6 +93,13 @@ public class Robot extends IterativeRobot {
 		
 		//input accelerometer
 		Accel1 = new BuiltInAccelerometer();
+		
+		//builtin gyroscope (ADXRS450)
+		Gyro1 = new ADXRS450_Gyro();
+		
+		//Gyro1.initGyro();
+		Gyro1.calibrate();
+		
 
 
 		//variables:
@@ -107,6 +115,29 @@ public class Robot extends IterativeRobot {
 
 	@Override
 	public void teleopPeriodic() {
+		
+		/*
+		 * Gyroscope is working.  Therefore it is possible to write code for driving straight:
+		 * 
+		 * Find this code in screensteps by searching for "Gyros - Measuring rotation and controlling robot driving direction"
+		 * 
+		 * The variable kP is a proportional scaling constant to scale it for the speed of the robot drive.  This factor is
+		 * 	called the proportional constant or loop gain. Increasing kP will cause the robot to correct more quickly.
+		 *   (but too high and it will oscillate).  Decreasing the constant will cause it to correct more slowly.
+		 *   This is known as proportional control - refer to PID control for more details.
+		 *   
+		 *   note that this example assumes there is a myrobot class set up to drive robot.
+		 *   
+		 *   gyro1.reset();	//set zero degree direction
+		 *   while (condition for length of time to drive straight)
+		 *   {
+		 *   	double angle = gyro.getAngle();	//get current heading
+		 *   	myrobot.drive(-1.0, -angle * kP;	//move towards heading of 0 degrees
+		 *   	Timer.delay(0.004);
+		 *   }
+		 *   myrobot.drive(0.0, 0.0); //stop robot
+		 * 
+		 */
 		
 		//Drive robot, but allow a "dead zone" around zero point of joystick
 		if(xbox.getRawAxis(5)>0.1 || xbox.getRawAxis(5)<-0.1) {
@@ -126,19 +157,33 @@ public class Robot extends IterativeRobot {
 		degreesPot1 = pot1.get();
 		//40-390
 		
-		System.out.println("Potentiometer 1 reading:" + degreesPot1);
-		SmartDashboard.putNumber("Potentiometer 1 reading:", degreesPot1);	//attempt to send info to driver station
+		
+		//when printing values, I am CASTING them to the int type. 
+		//	This gets rid of the values to the right of the decimal point
+		
+		System.out.println("Potentiometer 1 reading:" + (int) degreesPot1);
+		SmartDashboard.putNumber("Potentiometer 1 reading:", (int) degreesPot1);	//attempt to send info to driver station
 		
 		//test accelerometer 1
 		Accel1x=Accel1.getX();
 		Accel1y=Accel1.getY();
 		Accel1z=Accel1.getZ();
-		SmartDashboard.putNumber("Accelerometer x reading:", Accel1x);	//attempt to send info to driver station
-		SmartDashboard.putNumber("Accelerometer y reading:", Accel1y);	//attempt to send info to driver station
-		SmartDashboard.putNumber("Accelerometer z reading:", Accel1z);	//attempt to send info to driver station
-		System.out.println("Accelerometer x reading:"+  Accel1x);
-		System.out.println("Accelerometer y reading:"+  Accel1y);
-		System.out.println("Accelerometer z reading:"+  Accel1z);
+		SmartDashboard.putNumber("Accelerometer x reading:", (int) Accel1x);	//attempt to send info to driver station
+		SmartDashboard.putNumber("Accelerometer y reading:", (int) Accel1y);	//attempt to send info to driver station
+		SmartDashboard.putNumber("Accelerometer z reading:", (int) Accel1z);	//attempt to send info to driver station
+		System.out.println("Accelerometer x reading:"+  (int) Accel1x);
+		System.out.println("Accelerometer y reading:"+  (int) Accel1y);
+		System.out.println("Accelerometer z reading:"+  (int) Accel1z);
+		
+		//Gyro1 display:
+		SmartDashboard.putNumber("Gyro1 angle:",    Gyro1.getAngle());	//attempt to send info to driver station
+		SmartDashboard.putNumber("Gyro1 rate:",   Gyro1.getRate());	//attempt to send info to driver station
+		System.out.println("Gyro1 angle:"+   String.format("%.2f", Gyro1.getAngle()));
+		System.out.println("Gyro1 rate:"+   String.format("%.2f", Gyro1.getRate()));
+	
+		//I'm trying to get gyro values to print with just 2 decimal points, but the putString doesn't show anything
+		SmartDashboard.putString("Gyro1 angle:",   String.format("%.2f", Gyro1.getAngle()));	//attempt to send info to driver station
+		SmartDashboard.putString("Gyro1 rate:",  String.format("%.2f", Gyro1.getRate()));	//attempt to send info to driver station
 		
 		// test setting xbox buttons to move arms based on potentiometer settings
 		//low scale
