@@ -13,10 +13,10 @@ import org.usfirst.frc.team1512.robot.Robot;
 /**
  * An example command.  You can replace me with your own command.
  */
-public class ExampleCommand extends Command {
-	public ExampleCommand() {
+public class DriveWithJoysticks extends Command {
+	public DriveWithJoysticks() {
 		// Use requires() here to declare subsystem dependencies
-		requires(Robot.kExampleSubsystem);
+		requires(Robot.driveTrain);
 	}
 
 	// Called just before this Command runs the first time
@@ -27,6 +27,7 @@ public class ExampleCommand extends Command {
 	// Called repeatedly when this Command is scheduled to run
 	@Override
 	protected void execute() {
+		Robot.driveTrain.get
 	}
 
 	// Make this return true when this Command no longer needs to run execute()
