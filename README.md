@@ -55,7 +55,7 @@ This year we are using CAN Talons to control various motors on the robot. For au
 Information on how to use these encoders in java:
 To determine what value to pass to the talon for setting the desired encoder location, refer to this equation:
 ```
-((Desired RPM - Revolutions per Minute) * 4096) / 600)
+(Encoder Value) = ((Desired RPM - Revolutions per Minute) * 4096) / 600)
 ```
 This was derived from the given knowledge that 4096 "units" (ie a change in position) per 100ms is equal to 1 revolution per 100 ms
 
