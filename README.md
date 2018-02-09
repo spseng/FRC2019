@@ -17,8 +17,6 @@ Go through [CTRE installation steps](http://www.ctr-electronics.com/downloads/pd
 
 That's it, you are ready to code!
 
-End with an example of getting some data out of the system or using it for a little demo
-
 ## Contributing
 
 To contribute, follow the following steps
@@ -68,7 +66,7 @@ Distance = (diameter of tire) * pi * minutes * RPM*
 Note that this equation can be rearranged to solve for distance, time, and RPM. For example, if you knew how far you wanted the robot to go and how fast you wanted the robot to accomplish the movement:
 ```
 RPM = (desired Distance) / ((diameter of tire) * pi * (desired time))
-
+```
 
 ## Authors
 
