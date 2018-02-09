@@ -13,6 +13,8 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 //import com.ctre.phoenix.
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Joystick;
+//import edu.wpi.first.wpilibj.RobotDrive;  //RobotDrive deprecates to drive.DifferentialDrive
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.AnalogInput;
@@ -22,12 +24,10 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.interfaces.Potentiometer;
 import edu.wpi.first.wpilibj.smartdashboard.*;
 
@@ -47,13 +47,16 @@ import edu.wpi.first.wpilibj.smartdashboard.*;
 public class Robot extends IterativeRobot { 
 	//driver station devices:
 	private  XboxController xbox;	//driver station xbox controller
-	//private Joystick m_leftStick;	//driver station joysticks
-	//private Joystick m_rightStick;
+	private Joystick m_leftStick;	//driver station joysticks
+	private Joystick m_rightStick;
+	
 	
 	//motor controllers:
 	private WPI_TalonSRX FrontLeftMotor;
 	private WPI_TalonSRX FrontRightMotor;
 	private WPI_TalonSRX ArmMotor1;
+	private Spark MastLeft;
+	private Spark MastRight;
 	
 	//sensors:
 	private Potentiometer pot1;
@@ -71,21 +74,32 @@ public class Robot extends IterativeRobot {
 		//Accelermoters:
 			private double Accel1x;
 			private double Accel1y;
-			private double Accel1z;
+			private double Accel1z; 
+			
+		//RobotDrive
+		DifferentialDrive myDrive;
 	
 
 	@Override
 	public void robotInit() {
 		//driver station:
 		xbox = new XboxController(0);			//value in parentheses is USB number
-		//m_leftStick = new Joystick(1);
-		//m_rightStick = new Joystick(2);
+		m_leftStick = new Joystick(1);
+		m_rightStick = new Joystick(2);
+		
+		
 		
 		//robot motor controllers:
 		FrontLeftMotor = new WPI_TalonSRX(2);	//value in parentheses is CANBUS device ID
 		FrontRightMotor = new WPI_TalonSRX(4);
+		//FrontLeftMotor.set(ControlMode.PercentOutput, m_leftStick.getY());
 		ArmMotor1 = new WPI_TalonSRX(3);
+		MastLeft = new Spark(0);
+		MastRight = new Spark(1);
 		
+		//Robot drive system
+		myDrive = new DifferentialDrive(FrontLeftMotor, FrontRightMotor);
+
 		//sensors:
 		//potentiometer 1, connected to analog-input 3
 		ai3 = new AnalogInput(3);
@@ -140,7 +154,7 @@ public class Robot extends IterativeRobot {
 		 */
 		
 		//Drive robot, but allow a "dead zone" around zero point of joystick
-		if(xbox.getRawAxis(5)>0.1 || xbox.getRawAxis(5)<-0.1) {
+		/*if(xbox.getRawAxis(5)>0.1 || xbox.getRawAxis(5)<-0.1) {
 			FrontLeftMotor.set(-1.0 * xbox.getRawAxis(5));
 		}
 		else {
@@ -151,7 +165,45 @@ public class Robot extends IterativeRobot {
 		}
 		else {
 			FrontRightMotor.set(0.0);
+		}*/
+
+		//TANK DRIVE SECTION - Uses left and right joystick
+		//code to provide a "dead zone" for each joystick
+		double leftvalue, rightvalue=0.0;
+		if(m_leftStick.getY()>0.1 || m_leftStick.getY()<-0.1) 
+		{
+			leftvalue=m_leftStick.getY();
 		}
+		else 
+		{
+			leftvalue=0.0;
+		}
+		if(m_rightStick.getY()>0.1 || m_rightStick.getY()<-0.1) 
+		{
+			rightvalue=m_rightStick.getY();
+		}
+		else 
+		{
+			rightvalue=0.0;
+		}
+		
+		myDrive.tankDrive(leftvalue, rightvalue);
+		
+		
+		//MAST DRIVE SECTION - Uses xbox joystick
+		//code to provide a "dead zone" for each joystick
+		double mastvalue=0.0;
+		if(xbox.getRawAxis(1)>0.1 || xbox.getRawAxis(1)<-0.1) 
+		{
+			mastvalue=xbox.getRawAxis(1);
+		}
+		else 
+		{
+			mastvalue=0.0;
+		}
+		//use mastvalue to drive TWO motors, connected to MastLeft and MastRight Spark Controllers
+		MastLeft.set(mastvalue);
+		MastRight.set(mastvalue*-1.0);  // right mast motor mounted opposite
 		
 		//test potentiometer 1
 		degreesPot1 = pot1.get();
