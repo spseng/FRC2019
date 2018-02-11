@@ -23,6 +23,10 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
+//Pneumatics
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Solenoid;
+
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -58,12 +62,19 @@ public class Robot extends IterativeRobot {
 	private Spark MastLeft;
 	private Spark MastRight;
 	
+	//Pneummatic controllers
+	private Compressor compressor;
+	private Solenoid grabber;
+	
 	//sensors:
 	private Potentiometer pot1;
 	private BuiltInAccelerometer Accel1; //this is the builtin 3axis accelerometer on the ADXRS450 port, connected to SPI port on roboRio
 	private ADXRS450_Gyro Gyro1;	//this is the builtin gyro on the ADXRS450 port, connected to SPI port on roboRio
 	
 	//variables
+	
+		//grabber - pneumatic piece-grabbing system
+			private boolean grabberclosed;
 		//Potentiometers:
 			private double p1lowAngle;
 			private double p1middleAngle;
@@ -74,7 +85,7 @@ public class Robot extends IterativeRobot {
 		//Accelermoters:
 			private double Accel1x;
 			private double Accel1y;
-			private double Accel1z; 
+			private double Accel1z;
 			
 		//RobotDrive
 		DifferentialDrive myDrive;
@@ -99,6 +110,12 @@ public class Robot extends IterativeRobot {
 		
 		//Robot drive system
 		myDrive = new DifferentialDrive(FrontLeftMotor, FrontRightMotor);
+		
+		//pneumatics
+		compressor = new Compressor(1); //PCM (pneumatics control module) is on CANBus at ID 1
+		compressor.setClosedLoopControl(true); //this turns the control loop on, which means whenever pressure drops below 100psi compressor turns on
+		grabber = new Solenoid(1, 1);	//Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
+		
 
 		//sensors:
 		//potentiometer 1, connected to analog-input 3
@@ -125,6 +142,10 @@ public class Robot extends IterativeRobot {
 			
 			//accelerometer
 			Accel1x=Accel1y=Accel1z=0;
+			
+			//grabber
+			grabberclosed=true;
+
 	}
 
 	@Override
@@ -152,20 +173,6 @@ public class Robot extends IterativeRobot {
 		 *   myrobot.drive(0.0, 0.0); //stop robot
 		 * 
 		 */
-		
-		//Drive robot, but allow a "dead zone" around zero point of joystick
-		/*if(xbox.getRawAxis(5)>0.1 || xbox.getRawAxis(5)<-0.1) {
-			FrontLeftMotor.set(-1.0 * xbox.getRawAxis(5));
-		}
-		else {
-			FrontLeftMotor.set(0.0);
-		}
-		if(xbox.getRawAxis(1)>0.1 || xbox.getRawAxis(1)<-0.1) {
-			FrontRightMotor.set(xbox.getRawAxis(1));
-		}
-		else {
-			FrontRightMotor.set(0.0);
-		}*/
 
 		//TANK DRIVE SECTION - Uses left and right joystick
 		//code to provide a "dead zone" for each joystick
@@ -204,6 +211,31 @@ public class Robot extends IterativeRobot {
 		//use mastvalue to drive TWO motors, connected to MastLeft and MastRight Spark Controllers
 		MastLeft.set(mastvalue);
 		MastRight.set(mastvalue*-1.0);  // right mast motor mounted opposite
+		
+		//run robot arm GRABBER
+		if(xbox.getBumper(Hand.kRight) && grabberclosed==true) //if right bumper pressed and grabber is closed
+		{
+			
+			while (xbox.getBumper(Hand.kRight))
+			{
+				//do nothing - wait until bumper is released before proceeding - stops double setting
+			}
+			
+			grabber.set(false);	//open grabber
+			grabberclosed=false;
+		}
+		else if(xbox.getBumper(Hand.kRight) && grabberclosed==false) //if right bumper pressed and grabber is open
+		{
+			while (xbox.getBumper(Hand.kRight))
+			{
+				//do nothing - wait until bumper is released before proceeding - stops double setting
+			}
+			
+			grabber.set(true);	//close grabber
+			grabberclosed=true;			
+		}
+
+		
 		
 		//test potentiometer 1
 		degreesPot1 = pot1.get();
