@@ -75,6 +75,7 @@ public class Robot extends IterativeRobot {
 	
 		//grabber - pneumatic piece-grabbing system
 			private boolean grabberclosed;
+			private boolean compressoron;
 		//Potentiometers:
 			private double p1lowAngle;
 			private double p1middleAngle;
@@ -115,7 +116,7 @@ public class Robot extends IterativeRobot {
 		compressor = new Compressor(1); //PCM (pneumatics control module) is on CANBus at ID 1
 		compressor.setClosedLoopControl(true); //this turns the control loop on, which means whenever pressure drops below 100psi compressor turns on
 		grabber = new Solenoid(1, 1);	//Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
-		
+		compressoron=true; 				//records that compressor closed loop control is on
 
 		//sensors:
 		//potentiometer 1, connected to analog-input 3
@@ -234,7 +235,35 @@ public class Robot extends IterativeRobot {
 			grabber.set(true);	//close grabber
 			grabberclosed=true;			
 		}
+		
+		//while debugging, allow the compressor to be turned off and on
+		if(xbox.getBumper(Hand.kLeft) && compressoron==true) //if left bumper pressed and compressor on
+		{
+			
+			while (xbox.getBumper(Hand.kLeft))
+			{
+				//do nothing - wait until bumper is released before proceeding - stops double setting
+			}
+			
+			compressor.setClosedLoopControl(false);	//turn off compressor
+			compressoron=false;
+		}
+		else if(xbox.getBumper(Hand.kLeft) && compressoron==false) //if left bumper pressed and compressor off
+		{
+			while (xbox.getBumper(Hand.kLeft))
+			{
+				//do nothing - wait until bumper is released before proceeding - stops double setting
+			}
+			
+			compressor.setClosedLoopControl(true);	//turn on compressor
+			compressoron=true;
+		}
+		
+		
 
+		
+		
+		
 		
 		
 		//test potentiometer 1
