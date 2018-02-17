@@ -1,15 +1,19 @@
 package org.usfirst.frc.team1512.robot.subsystems;
+
 import org.usfirst.frc.team1512.robot.RobotMap;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.*;
+import edu.wpi.first.wpilibj.command.Subsystem;
 
-import edu.wpi.first.wpilibj.command.PIDSubsystem;
+public class DriveTrain extends Subsystem {
+	
+	private StringBuilder _sb = new StringBuilder();
+	TalonSRX talon = RobotMap.firstTalon;
+	TalonSRX right = RobotMap.secondTalon;
+	
+	public DriveTrain() {
 
-public class DriveTrain extends PIDSubsystem {
-	
-	
-	public DriveTrain(double p, double i, double d) {
-		super("DriveTrain", p, i, d);
-		setAbsoluteTolerance(0.05);
-		getPIDController().setContinuous(false);
 	}
 	
 	public void initDefaultCommand() {
@@ -17,11 +21,28 @@ public class DriveTrain extends PIDSubsystem {
 		// setDefaultCommand(new MySpecialCommand());
 	}
 	
-	protected double returnPIDInput() {
-		return RobotMap.pot1.get();
+	public String testTalonSensors() {
+		_sb.append("\tpos:");
+		_sb.append(talon.getSelectedSensorPosition(0));
+		_sb.append("u"); /* units */
+		return _sb.toString();
 	}
 	
-	protected void usePIDOutput(double output) {
-		RobotMap.firstTalon.pidWrite(output);
-	}
+	/**
+	 * All functions that you can test motor with:
+	 * double currentAmps = talon.getOutputCurrent();
+	 * double outputV = talon.getMotorOutputVoltage();
+	 * double busV = talon.getBusVoltage();
+	 * double outputPerc = talon.getMotorOutputPercent();
+	 * int quadPos = talon.getSensorCollection().getQuadraturePosition();
+	 * int quadVel = talon.getSensorCollection().getQuadratureVelocity();
+	 * int analogPos = talon.getSensorCollection().getAnalogIn();
+	 * int analogVel = talon.getSensorCollection().getAnalogInVel();
+	 * int selectedSensorPos = talon.getSelectedSensorPosition(0); -- sensor selected for PID Loop 0
+	 * int selectedSensorVel = talon.getSelectedSensorVelocity(0); -- sensor selected for PID Loop 0
+	 * int closedLoopErr = talon.getClosedLoopError(0); -- sensor selected for PID Loop 0
+	 * double closedLoopAccum = talon.getIntegralAccumulator(0); -- sensor selected for PID Loop 0
+	 * double derivErr = talon.getErrorDerivative(0); -- sensor selected for PID Loop 0
+	 */
+	
 }
