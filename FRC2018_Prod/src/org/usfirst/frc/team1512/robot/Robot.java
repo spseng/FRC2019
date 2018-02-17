@@ -23,7 +23,7 @@ import org.usfirst.frc.team1512.robot.subsystems.DriveTrain;
  * project.
  */
 public class Robot extends TimedRobot {
-	public static final DriveTrain driveTrain = new DriveTrain();
+	public static final DriveTrain driveTrain = new DriveTrain(0.2,0.0,0.0);
 	public static OI m_oi;
 
 	Command m_autonomousCommand;
