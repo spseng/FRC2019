@@ -7,6 +7,7 @@
 
 package org.usfirst.frc.team1512.robot;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -26,10 +27,10 @@ public class RobotMap {
 	// public static int rightMotor = 2;
 	
 	//TalonID as set in the live window
-	public static WPI_TalonSRX firstTalon = new WPI_TalonSRX(2);
-	public static WPI_TalonSRX secondTalon = new WPI_TalonSRX(4);
-	public static WPI_TalonSRX thirdTalon = new WPI_TalonSRX(6);
-	public static WPI_TalonSRX fourthTalon = new WPI_TalonSRX(8);
+	public static TalonSRX firstTalon = new TalonSRX(2);
+	public static TalonSRX secondTalon = new TalonSRX(4);
+	public static TalonSRX thirdTalon = new TalonSRX(6);
+	public static TalonSRX fourthTalon = new TalonSRX(8);
 	
 	//Joysticks setup
 	public static Joystick leftJoystick = new Joystick(0);
