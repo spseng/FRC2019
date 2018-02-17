@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 //Pneumatics
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -58,14 +59,16 @@ public class Robot extends IterativeRobot {
 	//motor controllers:
 	private WPI_TalonSRX FrontLeftMotor;
 	private WPI_TalonSRX FrontRightMotor;
+	private WPI_TalonSRX Shoulder;
+	private WPI_TalonSRX elbow;
 	private WPI_TalonSRX ArmMotor1;
 	private Spark MastLeft;
 	private Spark MastRight;
 	
 	//Pneummatic controllers
 	private Compressor compressor;
-	private Solenoid grabber;
-	
+	//private DoubleSolenoid grabber;
+	private Solenoid grabber;	
 	//sensors:
 	private Potentiometer pot1;
 	private BuiltInAccelerometer Accel1; //this is the builtin 3axis accelerometer on the ADXRS450 port, connected to SPI port on roboRio
@@ -109,12 +112,17 @@ public class Robot extends IterativeRobot {
 		MastLeft = new Spark(0);
 		MastRight = new Spark(1);
 		
+		
+		Shoulder = new WPI_TalonSRX(5);
+		elbow = new WPI_TalonSRX(6);
+		
 		//Robot drive system
 		myDrive = new DifferentialDrive(FrontLeftMotor, FrontRightMotor);
 		
 		//pneumatics
 		compressor = new Compressor(1); //PCM (pneumatics control module) is on CANBus at ID 1
 		compressor.setClosedLoopControl(true); //this turns the control loop on, which means whenever pressure drops below 100psi compressor turns on
+		//grabber = new DoubleSolenoid(1, 1,2);	//Double Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
 		grabber = new Solenoid(1, 1);	//Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
 		compressoron=true; 				//records that compressor closed loop control is on
 
@@ -197,13 +205,40 @@ public class Robot extends IterativeRobot {
 		
 		myDrive.tankDrive(leftvalue, rightvalue);
 		
+		//ARM
+		double shouldervalue =0.0;
+		if(xbox.getRawAxis(1)>0.1 ||xbox.getRawAxis(1)<-0.1)
+		{
+			shouldervalue=xbox.getRawAxis(1);
+		}
+		else
+		{
+			shouldervalue=0.0;
+		}
+		
+		Shoulder.set(shouldervalue);
+		
+		double elbowvalue =0.0;
+		if(xbox.getRawAxis(5)>0.1 ||xbox.getRawAxis(5)<-0.1)
+		{
+			elbowvalue=xbox.getRawAxis(5);
+		}
+		else
+		{
+			elbowvalue=0.0;
+		}
+		
+		elbow.set(elbowvalue);
+		 
+		
+		
 		
 		//MAST DRIVE SECTION - Uses xbox joystick
 		//code to provide a "dead zone" for each joystick
 		double mastvalue=0.0;
-		if(xbox.getRawAxis(1)>0.1 || xbox.getRawAxis(1)<-0.1) 
+		if(xbox.getRawAxis(0)>0.1 || xbox.getRawAxis(0)<-0.1) 
 		{
-			mastvalue=xbox.getRawAxis(1);
+			mastvalue=xbox.getRawAxis(0);
 		}
 		else 
 		{
@@ -223,6 +258,7 @@ public class Robot extends IterativeRobot {
 			}
 			
 			grabber.set(false);	//open grabber
+//			grabber.set(DoubleSolenoid.Value.kForward);	//open grabber
 			grabberclosed=false;
 		}
 		else if(xbox.getBumper(Hand.kRight) && grabberclosed==false) //if right bumper pressed and grabber is open
@@ -231,10 +267,17 @@ public class Robot extends IterativeRobot {
 			{
 				//do nothing - wait until bumper is released before proceeding - stops double setting
 			}
-			
+
+//			grabber.set(DoubleSolenoid.Value.kReverse);	//close grabber
 			grabber.set(true);	//close grabber
 			grabberclosed=true;			
 		}
+	/*	else
+		{
+			grabber.set(DoubleSolenoid.Value.kOff);	//open grabber
+
+		}
+		*/
 		
 		//while debugging, allow the compressor to be turned off and on
 		if(xbox.getBumper(Hand.kLeft) && compressoron==true) //if left bumper pressed and compressor on
