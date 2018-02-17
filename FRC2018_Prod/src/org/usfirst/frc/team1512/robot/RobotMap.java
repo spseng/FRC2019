@@ -28,8 +28,8 @@ public class RobotMap {
 	//TalonID as set in the live window
 	public static WPI_TalonSRX firstTalon = new WPI_TalonSRX(2);
 	public static WPI_TalonSRX secondTalon = new WPI_TalonSRX(4);
-	public static WPI_TalonSRX thirdTalon = new WPI_TalonSRX(6);
-	public static WPI_TalonSRX fourthTalon = new WPI_TalonSRX(8);
+	public static WPI_TalonSRX thirdTalon = new WPI_TalonSRX(5);
+	public static WPI_TalonSRX fourthTalon = new WPI_TalonSRX(6);
 	
 	//Joysticks setup
 	public static Joystick leftJoystick = new Joystick(0);

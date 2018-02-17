@@ -23,7 +23,7 @@ import org.usfirst.frc.team1512.robot.subsystems.DriveTrain;
  * project.
  */
 public class Robot extends TimedRobot {
-	public static final DriveTrain driveTrain = new DriveTrain(0.2,0.0,0.0);
+	public static DriveTrain driveTrain;
 	public static OI m_oi;
 
 	Command m_autonomousCommand;
@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void robotInit() {
 		m_oi = new OI();
+		driveTrain = new DriveTrain();
 		m_chooser.addDefault("Default Auto", new DriveWithJoysticks());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);

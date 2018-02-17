@@ -49,12 +49,13 @@ public class OI {
 
 	XboxController xbox = RobotMap.xboxController;
 	
+	
 	public double getLeftSpeed() {
 		return leftStick.getY();
 	}
 	
 	public double getRightSpeed() {
-		return rightStick.getY();
+		return rightStick.getY() * -1;
 	}
 	
 }

@@ -1,27 +1,21 @@
 package org.usfirst.frc.team1512.robot.subsystems;
 import org.usfirst.frc.team1512.robot.RobotMap;
+import org.usfirst.frc.team1512.robot.commands.DriveWithJoysticks;
 
-import edu.wpi.first.wpilibj.command.PIDSubsystem;
 
-public class DriveTrain extends PIDSubsystem {
-	
-	
-	public DriveTrain(double p, double i, double d) {
-		super("DriveTrain", p, i, d);
-		setAbsoluteTolerance(0.05);
-		getPIDController().setContinuous(false);
-	}
+import edu.wpi.first.wpilibj.command.Subsystem;
+
+public class DriveTrain extends Subsystem {
 	
 	public void initDefaultCommand() {
-		// Set the default command for a subsystem here.
-		// setDefaultCommand(new MySpecialCommand());
+		setDefaultCommand(new DriveWithJoysticks());
 	}
-	
-	protected double returnPIDInput() {
-		return RobotMap.pot1.get();
+
+	public void tankDrive(double leftSpeed, double rightSpeed) {
+		// Drives the motors
+		RobotMap.firstTalon.set(leftSpeed);
+		RobotMap.secondTalon.set(rightSpeed);
+		
 	}
-	
-	protected void usePIDOutput(double output) {
-		RobotMap.firstTalon.pidWrite(output);
-	}
+
 }
