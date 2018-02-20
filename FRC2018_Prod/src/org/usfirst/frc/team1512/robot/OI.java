@@ -9,7 +9,10 @@ package org.usfirst.frc.team1512.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.buttons.Button;
+import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import org.usfirst.frc.team1512.robot.RobotMap;
+import org.usfirst.frc.team1512.robot.commands.*;
 /**
  * This class is the glue that binds the controls on the physical operator
  * interface to the commands and command groups that allow control of the robot.
@@ -49,13 +52,29 @@ public class OI {
 
 	XboxController xbox = RobotMap.xboxController;
 	
+	// create buttons
+	Button raiseElevator = new JoystickButton(leftStick, 1);
+	Button lowerElevator = new JoystickButton(rightStick, 1);
+	Button openGrabber = new JoystickButton(leftStick, 2);
+	Button closeGrabber = new JoystickButton(rightStick, 2);
+	Button swapCompressor = new JoystickButton(leftStick, 3);
 	
+	Button driveStraight = new JoystickButton(rightStick, 3);
 	public double getLeftSpeed() {
 		return leftStick.getY();
 	}
 	
 	public double getRightSpeed() {
 		return rightStick.getY() * -1;
+	}
+	
+	public OI() {
+		swapCompressor.whenPressed(new toggleCompressor());
+		raiseElevator.whenPressed(new SetElevator(true));
+		lowerElevator.whenPressed(new SetElevator(false));
+		openGrabber.whenPressed(new SetGrabber(false));
+		closeGrabber.whenPressed(new SetGrabber(true));
+		driveStraight.whileHeld(new DriveStraight());
 	}
 	
 }

@@ -9,9 +9,15 @@ package org.usfirst.frc.team1512.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * The RobotMap is a mapping from the ports sensors and actuators are wired into
@@ -31,15 +37,25 @@ public class RobotMap {
 	public static WPI_TalonSRX thirdTalon = new WPI_TalonSRX(5);
 	public static WPI_TalonSRX fourthTalon = new WPI_TalonSRX(6);
 	
+	// Spark motors setup
+	public static Spark firstSpark = new Spark(0);
+	public static Spark secondSpark = new Spark(1);
+
 	//Joysticks setup
 	public static Joystick leftJoystick = new Joystick(0);
 	public static Joystick rightJoystick = new Joystick(1);
 	public static XboxController xboxController = new XboxController(2);
 	
 	//Sensors setup
-	static AnalogInput ai1 = new AnalogInput(1);
+	private static AnalogInput ai1 = new AnalogInput(3);
 	public static AnalogPotentiometer pot1 = new AnalogPotentiometer(ai1, 360, 30);
-
+	public static BuiltInAccelerometer Accel1 = new BuiltInAccelerometer();
+	public static ADXRS450_Gyro Gyro1 = new ADXRS450_Gyro();
+	public static DigitalInput limitSwitch1 = new DigitalInput(1);
+	
+	// Pneumatics Setup
+	public static Compressor compressor = new Compressor(1);
+	public static Solenoid grabber = new Solenoid(1, 1);
 	// If you are using multiple modules, make sure to define both the port
 	// number and the module. For example you with a rangefinder:
 	// public static int rangefinderPort = 1;

@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team1512.robot.commands.DriveWithJoysticks;
-import org.usfirst.frc.team1512.robot.subsystems.DriveTrain;
+import org.usfirst.frc.team1512.robot.subsystems.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,6 +24,8 @@ import org.usfirst.frc.team1512.robot.subsystems.DriveTrain;
  */
 public class Robot extends TimedRobot {
 	public static DriveTrain driveTrain;
+	public static Elevator elevator;
+	public static Grabber grabber;
 	public static OI m_oi;
 
 	Command m_autonomousCommand;
@@ -32,11 +34,18 @@ public class Robot extends TimedRobot {
 	/**
 	 * This function is run when the robot is first started up and should be
 	 * used for any initialization code.
+	 * 
+	 * Note that its ok to initialize the subsystems here because their commands won't be
+	 * scheduled by the Scheduler until teleopPeriodic starts
 	 */
 	@Override
 	public void robotInit() {
 		m_oi = new OI();
 		driveTrain = new DriveTrain();
+		elevator = new Elevator();
+		grabber = new Grabber();
+		RobotMap.compressor.setClosedLoopControl(true);
+		RobotMap.Gyro1.calibrate();
 		m_chooser.addDefault("Default Auto", new DriveWithJoysticks());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);

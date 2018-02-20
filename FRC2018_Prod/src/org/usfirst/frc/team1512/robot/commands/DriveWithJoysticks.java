@@ -44,6 +44,8 @@ public class DriveWithJoysticks extends Command {
     protected void end() {
     }
 
+    // very important that motors get stopped when this command is temporarily interrupted
     protected void interrupted() {
+    	Robot.driveTrain.stop();
     }
 }

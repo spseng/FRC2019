@@ -17,5 +17,16 @@ public class DriveTrain extends Subsystem {
 		RobotMap.secondTalon.set(rightSpeed);
 		
 	}
+	
+	// run both motors in the same set direction, because they are mounted opposite
+	public void spin() {
+		RobotMap.firstTalon.set(0.4);
+		RobotMap.secondTalon.set(0.4);
+	}
+	
+	public void stop() {
+		RobotMap.firstTalon.set(0.0);
+		RobotMap.secondTalon.set(0.0);
+	}
 
 }
