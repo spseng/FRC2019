@@ -19,7 +19,14 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.UsbCamera;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
@@ -59,9 +66,11 @@ public class Robot extends IterativeRobot {
 	//motor controllers:
 	private WPI_TalonSRX FrontLeftMotor;
 	private WPI_TalonSRX FrontRightMotor;
-	private WPI_TalonSRX Shoulder;
-	private WPI_TalonSRX elbow;
-	private WPI_TalonSRX ArmMotor1;
+//	private WPI_TalonSRX Shoulder;
+//	private WPI_TalonSRX elbow;
+	//private WPI_TalonSRX ArmMotor1;
+	private WPI_TalonSRX Tower;   //moving tower winch up and down
+	private WPI_TalonSRX GrabberLiftMotor;   //moving tower winch up and down
 	private Spark MastLeft;
 	private Spark MastRight;
 	
@@ -69,6 +78,8 @@ public class Robot extends IterativeRobot {
 	private Compressor compressor;
 	//private DoubleSolenoid grabber;
 	private Solenoid grabber;	
+	//private Solenoid grabberLift;	
+	private DoubleSolenoid grabberLift;
 	//sensors:
 	private Potentiometer pot1;
 	private BuiltInAccelerometer Accel1; //this is the builtin 3axis accelerometer on the ADXRS450 port, connected to SPI port on roboRio
@@ -78,6 +89,7 @@ public class Robot extends IterativeRobot {
 	
 		//grabber - pneumatic piece-grabbing system
 			private boolean grabberclosed;
+			private boolean grabberup;
 			private boolean compressoron;
 		//Potentiometers:
 			private double p1lowAngle;
@@ -98,23 +110,25 @@ public class Robot extends IterativeRobot {
 	@Override
 	public void robotInit() {
 		//driver station:
-		xbox = new XboxController(0);			//value in parentheses is USB number
-		m_leftStick = new Joystick(1);
-		m_rightStick = new Joystick(2);
+		xbox = new XboxController(2);			//value in parentheses is USB number
+		m_leftStick = new Joystick(0);
+		m_rightStick = new Joystick(1);
 		
-		
+		CameraServer.getInstance().startAutomaticCapture();
 		
 		//robot motor controllers:
 		FrontLeftMotor = new WPI_TalonSRX(2);	//value in parentheses is CANBUS device ID
 		FrontRightMotor = new WPI_TalonSRX(4);
 		//FrontLeftMotor.set(ControlMode.PercentOutput, m_leftStick.getY());
-		ArmMotor1 = new WPI_TalonSRX(3);
+//		ArmMotor1 = new WPI_TalonSRX(5);
+		Tower = new WPI_TalonSRX(5);  //moving tower up and down with winch
+		GrabberLiftMotor = new WPI_TalonSRX(6);  //moving tower up and down with winch
 		MastLeft = new Spark(0);
 		MastRight = new Spark(1);
 		
 		
-		Shoulder = new WPI_TalonSRX(5);
-		elbow = new WPI_TalonSRX(6);
+	
+	//	elbow = new WPI_TalonSRX(6);
 		
 		//Robot drive system
 		myDrive = new DifferentialDrive(FrontLeftMotor, FrontRightMotor);
@@ -124,8 +138,12 @@ public class Robot extends IterativeRobot {
 		compressor.setClosedLoopControl(true); //this turns the control loop on, which means whenever pressure drops below 100psi compressor turns on
 		//grabber = new DoubleSolenoid(1, 1,2);	//Double Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
 		grabber = new Solenoid(1, 1);	//Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
+//		grabberLift = new Solenoid(1, 2);	//Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
+		grabberLift = new DoubleSolenoid(1, 2,3);	//Double Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
 		compressoron=true; 				//records that compressor closed loop control is on
+		grabberup=true;					// records that grabberLift starts with grabber in up position
 
+			
 		//sensors:
 		//potentiometer 1, connected to analog-input 3
 		ai3 = new AnalogInput(3);
@@ -205,30 +223,33 @@ public class Robot extends IterativeRobot {
 		
 		myDrive.tankDrive(leftvalue, rightvalue);
 		
-		//ARM
-		double shouldervalue =0.0;
+		//Tower
+		double towervalue =0.0;
 		if(xbox.getRawAxis(1)>0.1 ||xbox.getRawAxis(1)<-0.1)
 		{
-			shouldervalue=xbox.getRawAxis(1);
+			towervalue=xbox.getRawAxis(1);
 		}
 		else
 		{
-			shouldervalue=0.0;
+			towervalue=0.0;
 		}
 		
-		Shoulder.set(shouldervalue);
+		Tower.set(towervalue);
+		//grabberLift to run tower winch up and down
 		
-		double elbowvalue =0.0;
+
+		//use talon and motor to raise/lower grabber
+		double GrabberLiftMotorvalue =0.0;
 		if(xbox.getRawAxis(5)>0.1 ||xbox.getRawAxis(5)<-0.1)
 		{
-			elbowvalue=xbox.getRawAxis(5);
+			GrabberLiftMotorvalue=xbox.getRawAxis(5);
 		}
 		else
 		{
-			elbowvalue=0.0;
+			GrabberLiftMotorvalue=0.0;
 		}
 		
-		elbow.set(elbowvalue);
+		GrabberLiftMotor.set(GrabberLiftMotorvalue);
 		 
 		
 		
@@ -272,15 +293,16 @@ public class Robot extends IterativeRobot {
 			grabber.set(true);	//close grabber
 			grabberclosed=true;			
 		}
-	/*	else
+		/*
+		else
 		{
 			grabber.set(DoubleSolenoid.Value.kOff);	//open grabber
 
 		}
 		*/
-		
-		//while debugging, allow the compressor to be turned off and on
-		if(xbox.getBumper(Hand.kLeft) && compressoron==true) //if left bumper pressed and compressor on
+
+		//run robot arm GRABBERLIFT
+		if(xbox.getBumper(Hand.kLeft) && grabberup==true) //if right bumper pressed and grabber is closed
 		{
 			
 			while (xbox.getBumper(Hand.kLeft))
@@ -288,12 +310,45 @@ public class Robot extends IterativeRobot {
 				//do nothing - wait until bumper is released before proceeding - stops double setting
 			}
 			
+//			grabberLift.set(false);	//open grabber
+			grabberLift.set(DoubleSolenoid.Value.kForward);	//open grabberlift
+			grabberup=false;
+		}
+		else if(xbox.getBumper(Hand.kLeft) && grabberup==false) //if right bumper pressed and grabber is open
+		{
+			while (xbox.getBumper(Hand.kLeft))
+			{
+				//do nothing - wait until bumper is released before proceeding - stops double setting
+			}
+
+			grabberLift.set(DoubleSolenoid.Value.kReverse);	//close grabberlift
+//			grabberLift.set(true);	//close grabber
+			grabberup=true;			
+		}		
+		else
+		{
+			grabberLift.set(DoubleSolenoid.Value.kOff);	//open grabber
+
+		}
+		
+
+		
+		
+		//while debugging, allow the compressor to be turned off and on
+		if(xbox.getAButton() && compressoron==true) //if left bumper pressed and compressor on
+		{
+			
+			while (xbox.getAButton())
+			{
+				//do nothing - wait until bumper is released before proceeding - stops double setting
+			}
+			
 			compressor.setClosedLoopControl(false);	//turn off compressor
 			compressoron=false;
 		}
-		else if(xbox.getBumper(Hand.kLeft) && compressoron==false) //if left bumper pressed and compressor off
+		else if(xbox.getAButton() && compressoron==false) //if left bumper pressed and compressor off
 		{
-			while (xbox.getBumper(Hand.kLeft))
+			while (xbox.getAButton())
 			{
 				//do nothing - wait until bumper is released before proceeding - stops double setting
 			}
@@ -343,7 +398,10 @@ public class Robot extends IterativeRobot {
 		
 		// test setting xbox buttons to move arms based on potentiometer settings
 		//low scale
-		if(xbox.getAButtonPressed()) {
+/*  Trying to switch to tower raise/lower instead of arm, so this section is commented out:
+  
+  		if(xbox.getAButtonPressed()) {
+ 
 			if(pot1.get()<p1lowAngle-5) {
 				ArmMotor1.set(0.2);
 			} else if (pot1.get()>p1lowAngle+5) {
@@ -381,6 +439,9 @@ public class Robot extends IterativeRobot {
 			p1lowAngle = pot1.get();
 		}
 		
+		//end of commented-out section
+*/
+
 	}
 		
 }
