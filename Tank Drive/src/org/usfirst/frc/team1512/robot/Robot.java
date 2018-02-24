@@ -66,10 +66,11 @@ public class Robot extends IterativeRobot {
 	//motor controllers:
 	private WPI_TalonSRX FrontLeftMotor;
 	private WPI_TalonSRX FrontRightMotor;
-	private WPI_TalonSRX Shoulder;
-	private WPI_TalonSRX elbow;
+//	private WPI_TalonSRX Shoulder;
+//	private WPI_TalonSRX elbow;
 	//private WPI_TalonSRX ArmMotor1;
 	private WPI_TalonSRX Tower;   //moving tower winch up and down
+	private WPI_TalonSRX GrabberLiftMotor;   //moving tower winch up and down
 	private Spark MastLeft;
 	private Spark MastRight;
 	
@@ -121,12 +122,13 @@ public class Robot extends IterativeRobot {
 		//FrontLeftMotor.set(ControlMode.PercentOutput, m_leftStick.getY());
 //		ArmMotor1 = new WPI_TalonSRX(5);
 		Tower = new WPI_TalonSRX(5);  //moving tower up and down with winch
+		GrabberLiftMotor = new WPI_TalonSRX(6);  //moving tower up and down with winch
 		MastLeft = new Spark(0);
 		MastRight = new Spark(1);
 		
 		
 	
-		elbow = new WPI_TalonSRX(6);
+	//	elbow = new WPI_TalonSRX(6);
 		
 		//Robot drive system
 		myDrive = new DifferentialDrive(FrontLeftMotor, FrontRightMotor);
@@ -233,19 +235,21 @@ public class Robot extends IterativeRobot {
 		}
 		
 		Tower.set(towervalue);
-		//grabberLift  //to run tower winch up and down
+		//grabberLift to run tower winch up and down
 		
-		double elbowvalue =0.0;
+
+		//use talon and motor to raise/lower grabber
+		double GrabberLiftMotorvalue =0.0;
 		if(xbox.getRawAxis(5)>0.1 ||xbox.getRawAxis(5)<-0.1)
 		{
-			elbowvalue=xbox.getRawAxis(5);
+			GrabberLiftMotorvalue=xbox.getRawAxis(5);
 		}
 		else
 		{
-			elbowvalue=0.0;
+			GrabberLiftMotorvalue=0.0;
 		}
 		
-		elbow.set(elbowvalue);
+		GrabberLiftMotor.set(GrabberLiftMotorvalue);
 		 
 		
 		
