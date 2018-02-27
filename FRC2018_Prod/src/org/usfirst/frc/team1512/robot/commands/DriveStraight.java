@@ -11,6 +11,9 @@ import edu.wpi.first.wpilibj.command.Command;
  */
 public class DriveStraight extends Command {
 	OI oi;
+	double setpoint, error, newVal, reading = 0;
+	double P = 1;
+	
     public DriveStraight() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
@@ -23,16 +26,17 @@ public class DriveStraight extends Command {
     	Robot.driveTrain.stop();
     	RobotMap.Gyro1.reset();
     }
+    
+    protected double PID() {
+    	reading = RobotMap.Gyro1.getAngle(); //Gets angle form Gyro
+    	error = setpoint - reading; //Calculates error based on the predefined reference point
+    	newVal = P*error; //Multiplies the error by a constant
+    return newVal;
+    }
 
     // Called repeatedly when this Command is scheduled to run
     protected void execute() {
-    	double reading = RobotMap.Gyro1.getAngle();
-    	if (reading > 0.0) {
-    		Robot.driveTrain.tankDrive(oi.getLeftSpeed() * 0.15, -0.1 * oi.getLeftSpeed());
-    	}
-    	else {
-    		Robot.driveTrain.tankDrive(oi.getLeftSpeed() * 0.1, -0.15 * oi.getLeftSpeed());
-    	}
+    		Robot.driveTrain.tankDrive(PID(), -PID()); //Turns each motor according to the error. 
     }
 
     // Make this return true when this Command no longer needs to run execute()
