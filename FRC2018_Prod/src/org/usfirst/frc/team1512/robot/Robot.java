@@ -12,7 +12,9 @@ import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.usfirst.frc.team1512.robot.commands.DriveWithJoysticks;
+import org.usfirst.frc.team1512.robot.commands.autonomous;
 import org.usfirst.frc.team1512.robot.subsystems.*;
 
 /**
@@ -47,7 +49,7 @@ public class Robot extends TimedRobot {
 		RobotMap.compressor.setClosedLoopControl(true);
 		RobotMap.Gyro1.calibrate();
 		m_chooser.addDefault("Default Auto", new DriveWithJoysticks());
-		// chooser.addObject("My Auto", new MyAutoCommand());
+		m_chooser.addObject("automatic", new autonomous(0));
 		SmartDashboard.putData("Auto mode", m_chooser);
 	}
 
