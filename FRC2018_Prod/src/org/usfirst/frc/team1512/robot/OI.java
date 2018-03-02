@@ -54,9 +54,9 @@ public class OI {
 	
 	// create buttons
 	Button raiseElevator = new JoystickButton(leftStick, 1);
-	Button lowerElevator = new JoystickButton(rightStick, 1);
+	Button lowerElevator = new JoystickButton(rightStick, 2);
 	Button openGrabber = new JoystickButton(leftStick, 2);
-	Button closeGrabber = new JoystickButton(rightStick, 2);
+	// Button closeGrabber = new JoystickButton(rightStick, 2);
 	Button swapCompressor = new JoystickButton(leftStick, 3);
 	
 	Button driveStraight = new JoystickButton(rightStick, 3);
@@ -73,7 +73,7 @@ public class OI {
 		raiseElevator.whenPressed(new SetElevator(true));
 		lowerElevator.whenPressed(new SetElevator(false));
 		openGrabber.whenPressed(new SetGrabber(false));
-		closeGrabber.whenPressed(new SetGrabber(true));
+		// closeGrabber.whenPressed(new SetGrabber(true));
 		driveStraight.whileHeld(new DriveStraight());
 	}
 	

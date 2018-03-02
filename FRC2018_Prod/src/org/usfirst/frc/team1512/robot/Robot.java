@@ -42,10 +42,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		m_oi = new OI();
 		driveTrain = new DriveTrain();
 		elevator = new Elevator();
 		grabber = new Grabber();
+		m_oi = new OI();
 		RobotMap.compressor.setClosedLoopControl(true);
 		RobotMap.Gyro1.calibrate();
 		m_chooser.addDefault("Default Auto", new DriveWithJoysticks());

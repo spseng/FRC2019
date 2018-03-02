@@ -38,8 +38,8 @@ public class RobotMap {
 	public static WPI_TalonSRX fourthTalon = new WPI_TalonSRX(6);
 	
 	// Spark motors setup
-	public static Spark firstSpark = new Spark(0);
-	public static Spark secondSpark = new Spark(1);
+	// public static Spark firstSpark = new Spark(0);
+	// public static Spark secondSpark = new Spark(1);
 
 	//Joysticks setup
 	public static Joystick leftJoystick = new Joystick(0);
@@ -51,7 +51,8 @@ public class RobotMap {
 	public static AnalogPotentiometer pot1 = new AnalogPotentiometer(ai1, 360, 30);
 	public static BuiltInAccelerometer Accel1 = new BuiltInAccelerometer();
 	public static ADXRS450_Gyro Gyro1 = new ADXRS450_Gyro();
-	public static DigitalInput limitSwitch1 = new DigitalInput(1);
+	public static DigitalInput limitSwitch1 = new DigitalInput(3);
+	public static DigitalInput limitSwitch2 = new DigitalInput(4);
 	
 	// Pneumatics Setup
 	public static Compressor compressor = new Compressor(1);
