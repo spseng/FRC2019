@@ -36,7 +36,12 @@ public class SetElevator extends Command {
 
     // Make this return true when this Command no longer needs to run execute()
     protected boolean isFinished() {
-        return Robot.elevator.isSwitchSet();
+    	if(UoD==true) {
+            return Robot.elevator.isTopSwitchSet();
+    	}
+    	else {
+    		return Robot.elevator.isLowSwitchSet();
+    	}
     }
 
     // Called once after isFinished returns true

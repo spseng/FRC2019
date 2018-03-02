@@ -32,6 +32,7 @@ import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 
 //Pneumatics
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
@@ -73,7 +74,8 @@ public class Robot extends IterativeRobot {
 	private WPI_TalonSRX GrabberLiftMotor;   //moving tower winch up and down
 	private Spark MastLeft;
 	private Spark MastRight;
-	
+	public static DigitalInput limitSwitch1 = new DigitalInput(3);
+	public static DigitalInput limitSwitch2 = new DigitalInput(4);
 	//Pneummatic controllers
 	private Compressor compressor;
 	//private DoubleSolenoid grabber;
@@ -103,17 +105,19 @@ public class Robot extends IterativeRobot {
 			private double Accel1y;
 			private double Accel1z;
 			
+			private double towervalue;
+			
 		//RobotDrive
 		DifferentialDrive myDrive;
 	
 
 	@Override
 	public void robotInit() {
+		towervalue =0.0;
 		//driver station:
 		xbox = new XboxController(2);			//value in parentheses is USB number
 		m_leftStick = new Joystick(0);
 		m_rightStick = new Joystick(1);
-		
 		CameraServer.getInstance().startAutomaticCapture();
 		
 		//robot motor controllers:
@@ -207,34 +211,40 @@ public class Robot extends IterativeRobot {
 		if(m_leftStick.getY()>0.1 || m_leftStick.getY()<-0.1) 
 		{
 			leftvalue=m_leftStick.getY();
+			rightvalue=m_leftStick.getX();
 		}
 		else 
 		{
 			leftvalue=0.0;
+			rightvalue = 0.0;
 		}
 		if(m_rightStick.getY()>0.1 || m_rightStick.getY()<-0.1) 
 		{
-			rightvalue=m_rightStick.getY();
+			// rightvalue=m_rightStick.getY();
 		}
 		else 
 		{
-			rightvalue=0.0;
+			// rightvalue=0.0;
 		}
-		
-		myDrive.tankDrive(leftvalue, rightvalue);
+		myDrive.arcadeDrive(leftvalue, rightvalue);
 		
 		//Tower
-		double towervalue =0.0;
-		if(xbox.getRawAxis(1)>0.1 ||xbox.getRawAxis(1)<-0.1)
+
+		if(xbox.getRawAxis(1)>0.1 && limitSwitch1.get() == false)
 		{
-			towervalue=xbox.getRawAxis(1);
+				System.out.println("inside if limitswitch1 test");
+				towervalue=xbox.getRawAxis(1);
+		}
+		else if(xbox.getRawAxis(1)<-0.1 && limitSwitch2.get() == true) {
+				System.out.println("inside if limitswitch2 test");
+				towervalue=xbox.getRawAxis(1);
 		}
 		else
 		{
 			towervalue=0.0;
 		}
 		
-		Tower.set(towervalue);
+		GrabberLiftMotor.set(towervalue);
 		//grabberLift to run tower winch up and down
 		
 
@@ -249,7 +259,7 @@ public class Robot extends IterativeRobot {
 			GrabberLiftMotorvalue=0.0;
 		}
 		
-		GrabberLiftMotor.set(GrabberLiftMotorvalue);
+		Tower.set(GrabberLiftMotorvalue);
 		 
 		
 		
@@ -382,16 +392,21 @@ public class Robot extends IterativeRobot {
 		SmartDashboard.putNumber("Accelerometer x reading:", (int) Accel1x);	//attempt to send info to driver station
 		SmartDashboard.putNumber("Accelerometer y reading:", (int) Accel1y);	//attempt to send info to driver station
 		SmartDashboard.putNumber("Accelerometer z reading:", (int) Accel1z);	//attempt to send info to driver station
+		/*
 		System.out.println("Accelerometer x reading:"+  (int) Accel1x);
 		System.out.println("Accelerometer y reading:"+  (int) Accel1y);
 		System.out.println("Accelerometer z reading:"+  (int) Accel1z);
+		**/
+		SmartDashboard.putBoolean("Limit Switch 1", limitSwitch1.get());
+		SmartDashboard.putBoolean("Limit Switch 2", limitSwitch2.get());
 		
 		//Gyro1 display:
 		SmartDashboard.putNumber("Gyro1 angle:",    Gyro1.getAngle());	//attempt to send info to driver station
 		SmartDashboard.putNumber("Gyro1 rate:",   Gyro1.getRate());	//attempt to send info to driver station
+		/*
 		System.out.println("Gyro1 angle:"+   String.format("%.2f", Gyro1.getAngle()));
 		System.out.println("Gyro1 rate:"+   String.format("%.2f", Gyro1.getRate()));
-	
+		**/
 		//I'm trying to get gyro values to print with just 2 decimal points, but the putString doesn't show anything
 		SmartDashboard.putString("Gyro1 angle:",   String.format("%.2f", Gyro1.getAngle()));	//attempt to send info to driver station
 		SmartDashboard.putString("Gyro1 rate:",  String.format("%.2f", Gyro1.getRate()));	//attempt to send info to driver station
