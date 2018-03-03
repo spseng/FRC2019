@@ -1,5 +1,6 @@
  package org.usfirst.frc.team1512.robot.commands;
 
+import org.usfirst.frc.team1512.robot.OI;
 import org.usfirst.frc.team1512.robot.Robot;
 
 import edu.wpi.first.wpilibj.command.Command;
@@ -7,15 +8,13 @@ import edu.wpi.first.wpilibj.command.Command;
 /**
  *
  */
-public class SetGrabber extends Command {
-
-	boolean OoC;
+public class toggleGrabber extends Command {
+	OI oi;
 	/**
 	 * 
 	 * @param type false is open, true is close
 	 */
-    public SetGrabber(boolean type) {
-    	OoC = type;
+    public toggleGrabber() {
         // Use requires() here to declare subsystem dependencies
         // eg. requires(chassis);
     	requires(Robot.grabber);
@@ -23,11 +22,12 @@ public class SetGrabber extends Command {
 
     // Called just before this Command runs the first time
     protected void initialize() {
-    	if(OoC == false) {
-    		Robot.grabber.open();
+    	oi = new OI();
+    	if(oi.grabberState()) {
+    		Robot.grabber.close();
     	}
     	else {
-    		Robot.grabber.close();
+    		Robot.grabber.open();
     	}
     }
 

@@ -15,14 +15,13 @@ import org.usfirst.frc.team1512.robot.OI;
  * An example command.  You can replace me with your own command.
  */
 public class DriveWithJoysticks extends Command {
-	OI oi;
+	OI oi = Robot.m_oi;
 	
     public DriveWithJoysticks() {
     	requires(Robot.driveTrain);// drivetrain is an instance of our Drivetrain subsystem
     }
 
     protected void initialize() {
-    	oi = new OI();
     }
 
     /*
