@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -178,6 +179,12 @@ public class Robot extends IterativeRobot {
 			grabberclosed=true;
 
 	}
+	
+	public void autonomousPeriodic() {
+		myDrive.tankDrive(0.5, -0.5);
+		Timer.delay(1.0);
+		myDrive.tankDrive(0.0, 0.0);
+	}
 
 	@Override
 	public void teleopPeriodic() {
@@ -211,22 +218,20 @@ public class Robot extends IterativeRobot {
 		if(m_leftStick.getY()>0.1 || m_leftStick.getY()<-0.1) 
 		{
 			leftvalue=m_leftStick.getY();
-			rightvalue=m_leftStick.getX();
 		}
 		else 
 		{
 			leftvalue=0.0;
-			rightvalue = 0.0;
 		}
 		if(m_rightStick.getY()>0.1 || m_rightStick.getY()<-0.1) 
 		{
-			// rightvalue=m_rightStick.getY();
+			rightvalue=-1.0 * m_rightStick.getY();
 		}
 		else 
 		{
-			// rightvalue=0.0;
+			rightvalue=0.0;
 		}
-		myDrive.arcadeDrive(leftvalue, rightvalue);
+		myDrive.tankDrive(leftvalue, rightvalue);
 		
 		//Tower
 
