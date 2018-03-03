@@ -110,8 +110,6 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putBoolean("Limit Switch 1", RobotMap.limitSwitch1.get());
 		SmartDashboard.putBoolean("Limit Switch 2", RobotMap.limitSwitch2.get());
 		SmartDashboard.putNumber("Gyro1 angle:", RobotMap.Gyro1.getAngle());
-		
-		new LiftGrabber();
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove

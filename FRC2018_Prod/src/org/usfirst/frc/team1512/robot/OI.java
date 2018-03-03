@@ -83,6 +83,15 @@ public class OI {
 	// a button
 	Button swapCompressor = new JoystickButton(xbox, 1);
 	
+	public double getElevatorSpeed() {
+		if(xbox.getRawAxis(5)>0.1 || xbox.getRawAxis(5)<-0.1) {
+			return xbox.getRawAxis(5);
+		}
+		else {
+			return 0.0;
+		}
+	}
+	
 	public double getGrabberSpeed() {
 		if(xbox.getRawAxis(1)>0.1 || xbox.getRawAxis(1)<-0.1) {
 			return xbox.getRawAxis(1);
@@ -125,6 +134,7 @@ public class OI {
 			"leftStick Y axis: move left drive",
 			"rightStick Y axis: move right drive",
 			"xbox leftStick Y axis: bring grabber in or out of robot",
+			"xbox rightStick Y axis: move elevator up or down",
 			"xbox leftBumper: raise elevator",
 			"xbox rightBumper: lower elevator",
 			"xbox Y Button: toggle pneumatic grabber",

@@ -37,6 +37,27 @@ public class Elevator extends Subsystem {
 		RobotMap.fourthTalon.set(-1.0);
 	}
 	
+	public void moveElevator(double speed) {
+		if(speed>0) {
+			boolean top = isTopSwitchSet();
+			if(top) {
+				// do nothing
+			}
+			else {
+				RobotMap.fourthTalon.set(speed);
+			}
+		}
+		if(speed<0) {
+			boolean bot = isLowSwitchSet();
+			if(bot) {
+				// do nothing
+			}
+			else {
+				RobotMap.fourthTalon.set(speed);
+			}
+		}
+	}
+	
 	public void stop() {
 		RobotMap.fourthTalon.set(0.0);
 	}
