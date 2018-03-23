@@ -29,6 +29,8 @@ public class Robot extends TimedRobot {
 	public static DriveTrain driveTrain;
 	public static Elevator elevator;
 	public static Grabber grabber;
+	public static Solenoid3 solenoid3;
+	public static Solenoid4 solenoid4;
 	public static OI m_oi;
 
 	Command m_autonomousCommand;
@@ -47,6 +49,8 @@ public class Robot extends TimedRobot {
 		driveTrain = new DriveTrain();
 		elevator = new Elevator();
 		grabber = new Grabber();
+		solenoid3 = new Solenoid3();
+		solenoid4 = new Solenoid4();
 		m_oi = new OI();
 		RobotMap.compressor.setClosedLoopControl(true);
 		RobotMap.Gyro1.calibrate();

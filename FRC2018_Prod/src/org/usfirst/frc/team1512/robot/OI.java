@@ -50,6 +50,8 @@ public class OI {
 	// button.whenReleased(new ExampleCommand());
 	
 	boolean grabberState = true;
+	boolean solenoid3State = true;
+	boolean solenoid4State = true;
 
 	Joystick leftStick = RobotMap.leftJoystick;
 	Joystick rightStick = RobotMap.rightJoystick;
@@ -82,6 +84,9 @@ public class OI {
 
 	// a button
 	Button swapCompressor = new JoystickButton(xbox, 1);
+	
+	Button toggleSolenoid3 = new JoystickButton(xbox, 7);
+	Button toggleSolenoid4 = new JoystickButton(xbox,8);
 	
 	public double getElevatorSpeed() {
 		if(xbox.getRawAxis(5)>0.1 || xbox.getRawAxis(5)<-0.1) {
@@ -128,6 +133,27 @@ public class OI {
 			return false;
 		}
 	}
+	
+	public boolean solenoid3State() {
+		if (solenoid3State == false) {
+			solenoid3State = true;
+			return true;
+		}
+		else {
+			solenoid3State = false;
+			return false;
+		}
+	}
+	public boolean solenoid4State() {
+		if (solenoid4State == false) {
+			solenoid4State = true;
+			return true;
+		}
+		else {
+			solenoid4State = false;
+			return false;
+		}
+	}
 	public OI() {
 		String[] buttonInfo =
 		{
@@ -145,6 +171,8 @@ public class OI {
 		raiseElevator.whenPressed(new SetElevator(true));
 		lowerElevator.whenPressed(new SetElevator(false));
 		toggleGrabber.whenPressed(new toggleGrabber());
+		toggleSolenoid3.whenPressed(new toggleSolenoid3());
+		toggleSolenoid3.whenPressed(new toggleSolenoid4());
 	}
 	
 }
