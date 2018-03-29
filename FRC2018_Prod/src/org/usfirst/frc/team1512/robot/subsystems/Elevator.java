@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1512.robot.subsystems;
 
 import org.usfirst.frc.team1512.robot.RobotMap;
+import org.usfirst.frc.team1512.robot.commands.MoveElevator;
 
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -10,37 +11,60 @@ import edu.wpi.first.wpilibj.command.Subsystem;
  */
 public class Elevator extends Subsystem {
 
-	// catches fast limit switch changes
-	Counter counter = new Counter(RobotMap.limitSwitch1);
-	Counter counter2 = new Counter(RobotMap.limitSwitch2);
     // Put methods for controlling this subsystem
     // here. Call these from Commands.
 	public boolean isLowSwitchSet() {
-		return counter2.get() > 0;
+		if (RobotMap.limitSwitch2.get() == false) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	public boolean isTopSwitchSet() {
-		return counter.get() > 0;
+		if (RobotMap.limitSwitch1.get() == true) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
-	public void initializeCounter() {
-		counter.reset();
-	}
 	public void moveUp() {
-		RobotMap.thirdTalon.set(0.1);
+		RobotMap.fourthTalon.set(1.0);
 	}
 	public void moveDown() {
-		RobotMap.thirdTalon.set(-0.1);
+		RobotMap.fourthTalon.set(-1.0);
+	}
+	
+	public void moveElevator(double speed) {
+		if(speed>0) {
+			boolean top = isTopSwitchSet();
+			if(top) {
+				// do nothing
+			}
+			else {
+				RobotMap.fourthTalon.set(speed);
+			}
+		}
+		if(speed<0) {
+			boolean bot = isLowSwitchSet();
+			if(bot) {
+				// do nothing
+			}
+			else {
+				RobotMap.fourthTalon.set(speed);
+			}
+		}
 	}
 	
 	public void stop() {
-		counter.reset();
-		counter2.reset();
-		RobotMap.thirdTalon.set(0.0);
+		RobotMap.fourthTalon.set(0.0);
 	}
     public void initDefaultCommand() {
         // Set the default command for a subsystem here.
-        //setDefaultCommand(new MySpecialCommand());
+        setDefaultCommand(new MoveElevator());
     }
 }
 

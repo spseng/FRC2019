@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 public class autonomous extends CommandGroup {
  public autonomous(int i) {
 	switch (i) {
-	case 0: driveFromLeft();
+	case 0: driveFromLeft(1.0, 0.5);
 	case 1: driveFromRight();
 	case 2: driveFromCenter();
 	case 3: scoreFromLeft();
@@ -13,22 +13,22 @@ public class autonomous extends CommandGroup {
 	}
  }
  
- public void driveFromLeft() {
-	 addSequential(new DriveStraight());
+ public void driveFromLeft(double time, double speed) {
+	 addSequential(new DriveStraight(time, speed));
  }
  public void driveFromRight() {
-	 addSequential(new DriveStraight());
+	 addSequential(new DriveStraight(0.0, 0.0));
  }
  public void driveFromCenter() {
-	 addSequential(new DriveStraight());
+	 addSequential(new DriveStraight(0.0, 0.0));
  }
  public void scoreFromLeft() {
-	 addSequential(new DriveStraight());
+	 addSequential(new DriveStraight(0.0, 0.0));
  }
  public void scoreFromRight() {
-	 addSequential(new DriveStraight());
+	 addSequential(new DriveStraight(0.0, 0.0));
  }
  public void scoreFromCenter() {
-	 addSequential(new DriveStraight());
+	 addSequential(new DriveStraight(0.0, 0.0));
  }
 }

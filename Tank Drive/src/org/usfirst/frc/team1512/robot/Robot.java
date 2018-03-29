@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.Spark;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.CameraServer;
@@ -78,15 +79,15 @@ public class Robot extends IterativeRobot {
 	public static DigitalInput limitSwitch2 = new DigitalInput(4);
 	//Pneummatic controllers
 	private Compressor compressor;
-	//private DoubleSolenoid grabber;
-	private Solenoid grabber;	
+	private DoubleSolenoid grabber;
+	//private Solenoid grabber;	
 	//private Solenoid grabberLift;	
 	private DoubleSolenoid grabberLift;
 	//sensors:
 	private Potentiometer pot1;
 	private BuiltInAccelerometer Accel1; //this is the builtin 3axis accelerometer on the ADXRS450 port, connected to SPI port on roboRio
 	private ADXRS450_Gyro Gyro1;	//this is the builtin gyro on the ADXRS450 port, connected to SPI port on roboRio
-	
+	private double startTime = 0.0;
 	//variables
 	
 		//grabber - pneumatic piece-grabbing system
@@ -140,14 +141,14 @@ public class Robot extends IterativeRobot {
 		//pneumatics
 		compressor = new Compressor(1); //PCM (pneumatics control module) is on CANBus at ID 1
 		compressor.setClosedLoopControl(true); //this turns the control loop on, which means whenever pressure drops below 100psi compressor turns on
-		//grabber = new DoubleSolenoid(1, 1,2);	//Double Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
-		grabber = new Solenoid(1, 1);	//Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
+		grabber = new DoubleSolenoid(1, 0,1);	//Double Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
+		//grabber = new Solenoid(1, 1);	//Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
 //		grabberLift = new Solenoid(1, 2);	//Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
 		grabberLift = new DoubleSolenoid(1, 2,3);	//Double Solenoid port numbering on PCM begins at 0, first number is CANBus ID, second number is port number on PCM
 		compressoron=true; 				//records that compressor closed loop control is on
 		grabberup=true;					// records that grabberLift starts with grabber in up position
 
-			
+	//	grabber.set(true);																																																																																		
 		//sensors:
 		//potentiometer 1, connected to analog-input 3
 		ai3 = new AnalogInput(3);
@@ -178,7 +179,26 @@ public class Robot extends IterativeRobot {
 			grabberclosed=true;
 
 	}
+	
+	public void autonomousInit() {
+		startTime = Timer.getFPGATimestamp();
+	}
+	
+	public void autonomousPeriodic() {
+		double time = Timer.getFPGATimestamp();
+		double elapsedTime = time - startTime;
+		if (elapsedTime <= 5.0) {
+			myDrive.tankDrive(-0.7, -0.7);
+		}
+		else {
+			myDrive.tankDrive(0.0, 0.0);
+		}
+	}
 
+	public void teleopDisabled() {
+		//grabber.set(true);
+		grabberclosed = true;
+	}
 	@Override
 	public void teleopPeriodic() {
 		
@@ -210,32 +230,30 @@ public class Robot extends IterativeRobot {
 		double leftvalue, rightvalue=0.0;
 		if(m_leftStick.getY()>0.1 || m_leftStick.getY()<-0.1) 
 		{
-			leftvalue=m_leftStick.getY();
-			rightvalue=m_leftStick.getX();
+			leftvalue=m_leftStick.getY()*0.8;
 		}
 		else 
 		{
 			leftvalue=0.0;
-			rightvalue = 0.0;
 		}
 		if(m_rightStick.getY()>0.1 || m_rightStick.getY()<-0.1) 
 		{
-			// rightvalue=m_rightStick.getY();
+			rightvalue=m_rightStick.getY()*0.8;
 		}
 		else 
 		{
-			// rightvalue=0.0;
+			rightvalue=0.0;
 		}
-		myDrive.arcadeDrive(leftvalue, rightvalue);
+		myDrive.tankDrive(leftvalue, rightvalue);
 		
 		//Tower
 
-		if(xbox.getRawAxis(1)>0.1 && limitSwitch1.get() == false)
+		if(xbox.getRawAxis(1)>0.1 )
 		{
 				System.out.println("inside if limitswitch1 test");
 				towervalue=xbox.getRawAxis(1);
 		}
-		else if(xbox.getRawAxis(1)<-0.1 && limitSwitch2.get() == true) {
+		else if(xbox.getRawAxis(1)<-0.1 ) {
 				System.out.println("inside if limitswitch2 test");
 				towervalue=xbox.getRawAxis(1);
 		}
@@ -288,9 +306,10 @@ public class Robot extends IterativeRobot {
 				//do nothing - wait until bumper is released before proceeding - stops double setting
 			}
 			
-			grabber.set(false);	//open grabber
-//			grabber.set(DoubleSolenoid.Value.kForward);	//open grabber
+		//	grabber.set(false);	//open grabber
+			grabber.set(DoubleSolenoid.Value.kForward);	//open grabber
 			grabberclosed=false;
+			SmartDashboard.putBoolean("grabberstate", grabberclosed);
 		}
 		else if(xbox.getBumper(Hand.kRight) && grabberclosed==false) //if right bumper pressed and grabber is open
 		{
@@ -299,17 +318,18 @@ public class Robot extends IterativeRobot {
 				//do nothing - wait until bumper is released before proceeding - stops double setting
 			}
 
-//			grabber.set(DoubleSolenoid.Value.kReverse);	//close grabber
-			grabber.set(true);	//close grabber
-			grabberclosed=true;			
+			grabber.set(DoubleSolenoid.Value.kReverse);	//close grabber
+			//grabber.set(true);	//close grabber
+			grabberclosed=true;	
+			SmartDashboard.putBoolean("grabberstate", grabberclosed);
 		}
-		/*
+		
 		else
 		{
 			grabber.set(DoubleSolenoid.Value.kOff);	//open grabber
 
 		}
-		*/
+		
 
 		//run robot arm GRABBERLIFT
 		if(xbox.getBumper(Hand.kLeft) && grabberup==true) //if right bumper pressed and grabber is closed
@@ -382,7 +402,7 @@ public class Robot extends IterativeRobot {
 		//when printing values, I am CASTING them to the int type. 
 		//	This gets rid of the values to the right of the decimal point
 		
-		System.out.println("Potentiometer 1 reading:" + (int) degreesPot1);
+		// System.out.println("Potentiometer 1 reading:" + (int) degreesPot1);
 		SmartDashboard.putNumber("Potentiometer 1 reading:", (int) degreesPot1);	//attempt to send info to driver station
 		
 		//test accelerometer 1

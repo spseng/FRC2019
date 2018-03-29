@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.Button;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import org.usfirst.frc.team1512.robot.RobotMap;
 import org.usfirst.frc.team1512.robot.commands.*;
 /**
@@ -47,34 +49,102 @@ public class OI {
 	// until it is finished as determined by it's isFinished method.
 	// button.whenReleased(new ExampleCommand());
 	
+	boolean grabberState = true;
+
 	Joystick leftStick = RobotMap.leftJoystick;
 	Joystick rightStick = RobotMap.rightJoystick;
 
+	
+	/**
+	 * kBumperLeft(5),
+     * kBumperRight(6),
+     * kStickLeft(9),
+     * kStickRight(10),
+     * kA(1),
+     * kB(2),
+     * kX(3),
+     * kY(4),
+     * kBack(7),
+     * kStart(8)
+	 */
 	XboxController xbox = RobotMap.xboxController;
 	
 	// create buttons
-	Button raiseElevator = new JoystickButton(leftStick, 1);
-	Button lowerElevator = new JoystickButton(rightStick, 2);
-	Button openGrabber = new JoystickButton(leftStick, 2);
-	// Button closeGrabber = new JoystickButton(rightStick, 2);
-	Button swapCompressor = new JoystickButton(leftStick, 3);
 	
-	Button driveStraight = new JoystickButton(rightStick, 3);
+	// left bumper to raise elevator
+	Button raiseElevator = new JoystickButton(xbox, 5);
+	
+	// right bumper to lower elevator
+	Button lowerElevator = new JoystickButton(xbox, 6);
+	
+	// Y button to toggle grabber
+	Button toggleGrabber = new JoystickButton(xbox, 4);
+
+	// a button
+	Button swapCompressor = new JoystickButton(xbox, 1);
+	
+	public double getElevatorSpeed() {
+		if(xbox.getRawAxis(5)>0.1 || xbox.getRawAxis(5)<-0.1) {
+			return xbox.getRawAxis(5);
+		}
+		else {
+			return 0.0;
+		}
+	}
+	
+	public double getGrabberSpeed() {
+		if(xbox.getRawAxis(1)>0.1 || xbox.getRawAxis(1)<-0.1) {
+			return xbox.getRawAxis(1);
+		}
+		else {
+			return 0.0;
+		}
+	}
 	public double getLeftSpeed() {
-		return leftStick.getY();
+		if(leftStick.getY()>0.1 || leftStick.getY()<-0.1) {
+			return leftStick.getY();
+		}
+		else {
+			return 0.0;
+		}
 	}
 	
 	public double getRightSpeed() {
-		return rightStick.getY() * -1;
+		if(rightStick.getY()>0.1 || rightStick.getY()<-0.1) {
+			return -1.0 * rightStick.getY();
+		}
+		else {
+			return 0.0;
+		}
 	}
 	
+	public boolean grabberState() {
+		if (grabberState == false) {
+			grabberState = true;
+			return true;
+		}
+		else {
+			grabberState = false;
+			return false;
+		}
+	}
 	public OI() {
+		String[] buttonInfo =
+		{
+			"leftStick Y axis: move left drive",
+			"rightStick Y axis: move right drive",
+			"xbox leftStick Y axis: bring grabber in or out of robot",
+			"xbox rightStick Y axis: move elevator up or down",
+			"xbox leftBumper: raise elevator",
+			"xbox rightBumper: lower elevator",
+			"xbox Y Button: toggle pneumatic grabber",
+		 	"xbox A Button: toggle pneumatic compressor"
+		};
+		SmartDashboard.putStringArray("Button Information!", buttonInfo);
 		swapCompressor.whenPressed(new toggleCompressor());
 		raiseElevator.whenPressed(new SetElevator(true));
 		lowerElevator.whenPressed(new SetElevator(false));
-		openGrabber.whenPressed(new SetGrabber(false));
-		// closeGrabber.whenPressed(new SetGrabber(true));
-		driveStraight.whileHeld(new DriveStraight());
+		toggleGrabber.whenPressed(new toggleGrabber());
 	}
 	
 }

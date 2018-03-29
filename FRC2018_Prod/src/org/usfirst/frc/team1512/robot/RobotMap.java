@@ -10,6 +10,7 @@ package org.usfirst.frc.team1512.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
@@ -56,7 +57,9 @@ public class RobotMap {
 	
 	// Pneumatics Setup
 	public static Compressor compressor = new Compressor(1);
-	public static Solenoid grabber = new Solenoid(1, 1);
+	//public static Solenoid grabber = new Solenoid(1, 1);
+	public static DoubleSolenoid grabber = new DoubleSolenoid(1,0, 1);
+	
 	// If you are using multiple modules, make sure to define both the port
 	// number and the module. For example you with a rangefinder:
 	// public static int rangefinderPort = 1;
