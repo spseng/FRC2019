@@ -1,5 +1,5 @@
-# FRC2018
-St. Paul's School FIRST Robotics Team 1512 software for the 2018 competition.
+# FRC2019
+St. Paul's School FIRST Robotics Team 1512 software for the 2019 competition.
 
 ## Getting Started
 
@@ -7,7 +7,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-The FRC 2018 Java/Eclipse WPI screensteps have been completed in their entirety
+The FRC 2019 Java/Eclipse WPI screensteps have been completed in their entirety
 
 ### Installing
 
