@@ -9,9 +9,11 @@ These instructions will get you a copy of the project up and running on your loc
 
 The FRC 2019 Java/Eclipse WPI screensteps have been completed in their entirety
 
-### Installing
+View WPI documentation here! https://wpilib.screenstepslive.com/s/currentCS/m/java
 
-Install [git](https://git-scm.com/downloads)
+### Installation Process
+
+Install [git command line interface](https://git-scm.com/downloads)
 
 Go through [CTRE installation steps](http://www.ctr-electronics.com/downloads/pdf/CTRE%20Toolsuite%20Installation%20Guide.pdf)
 
@@ -68,6 +70,7 @@ Note that this equation can be rearranged to solve for distance, time, and RPM. 
 RPM = (desired Distance) / ((diameter of tire) * pi * (desired time))
 ```
 
-## Authors
+## Authors 
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/spseng/FRC2019/graphs/contributors) who participated in this project.
+
